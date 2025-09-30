@@ -1,6 +1,7 @@
 # Formula 1 Analytics
-- Pipeline implements medallion architecture
-- Power BI dashboard is published to Power BI service
+
+## Workflow Diagram
+<img width="1989" height="1209" alt="image" src="https://github.com/user-attachments/assets/ba460699-ae82-4b55-a3d9-94ac4e4a5e2c" />
 
 ## Power BI Dashboard Snapshots
 
