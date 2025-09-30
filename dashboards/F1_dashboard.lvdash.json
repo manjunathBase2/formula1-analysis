@@ -1,0 +1,1732 @@
+{
+  "datasets": [
+    {
+      "name": "857dd4f3",
+      "displayName": "driver_standings",
+      "queryLines": [
+        "select * from f1_catalog.gold.driver_standings_gold"
+      ]
+    },
+    {
+      "name": "de920dc5",
+      "displayName": "leaderdashboard_data",
+      "queryLines": [
+        "SELECT\r\n",
+        "  race_year,\r\n",
+        "  name,\r\n",
+        "  nationality,\r\n",
+        "  SUM(total_points) AS total_points,\r\n",
+        "  SUM(total_wins) AS total_wins,\r\n",
+        "  RANK() OVER (\r\n",
+        "      PARTITION BY race_year \r\n",
+        "      ORDER BY SUM(total_points) DESC\r\n",
+        "  ) AS position\r\n",
+        "FROM f1_catalog.gold.driver_standings_gold\r\n",
+        "WHERE race_year = :race_year\r\n",
+        "GROUP BY race_year, name, nationality\r\n",
+        "ORDER BY position;\r\n"
+      ],
+      "parameters": [
+        {
+          "displayName": "race_year",
+          "keyword": "race_year",
+          "dataType": "STRING",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "2020"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "19f0b05a",
+      "displayName": "total_drivers",
+      "queryLines": [
+        "SELECT \r\n",
+        "  COUNT(DISTINCT driver_id) AS total_drivers\r\n",
+        "FROM f1_catalog.gold.driver_standings_gold\r\n",
+        "WHERE race_year = :race_year;\r\n",
+        "\r\n",
+        "\r\n",
+        "\r\n",
+        "\r\n"
+      ],
+      "parameters": [
+        {
+          "displayName": "race_year",
+          "keyword": "race_year",
+          "dataType": "STRING",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "2020"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "14c03782",
+      "displayName": "top_driver",
+      "queryLines": [
+        "SELECT \r\n",
+        "  name,\r\n",
+        "  SUM(total_points) AS total_points\r\n",
+        "FROM f1_catalog.gold.driver_standings_gold\r\n",
+        "WHERE race_year = :race_year\r\n",
+        "GROUP BY name\r\n",
+        "ORDER BY total_points DESC\r\n",
+        "LIMIT 1;\r\n",
+        "\r\n"
+      ],
+      "parameters": [
+        {
+          "displayName": "race_year",
+          "keyword": "race_year",
+          "dataType": "STRING",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "2020"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "c515c963",
+      "displayName": "Driver_mostwins",
+      "queryLines": [
+        "SELECT \r\n",
+        "  name,\r\n",
+        "  SUM(total_wins) AS total_wins\r\n",
+        "FROM f1_catalog.gold.driver_standings_gold\r\n",
+        "WHERE race_year = :race_year\r\n",
+        "GROUP BY name\r\n",
+        "ORDER BY total_wins DESC\r\n",
+        "LIMIT 1;\r\n"
+      ],
+      "parameters": [
+        {
+          "displayName": "race_year",
+          "keyword": "race_year",
+          "dataType": "STRING",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "2020"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "cc0ef730",
+      "displayName": "wins_distribution",
+      "queryLines": [
+        "SELECT\r\n",
+        "  name,\r\n",
+        "  SUM(total_wins) AS total_wins\r\n",
+        "FROM f1_catalog.gold.driver_standings_gold\r\n",
+        "WHERE race_year = :race_year\r\n",
+        "GROUP BY name\r\n",
+        "HAVING SUM(total_wins) > 0\r\n",
+        "ORDER BY total_wins DESC;\r\n",
+        "\r\n"
+      ],
+      "parameters": [
+        {
+          "displayName": "race_year",
+          "keyword": "race_year",
+          "dataType": "STRING",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "2020"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "9a028f47",
+      "displayName": "points_bydriver",
+      "queryLines": [
+        "SELECT\r\n",
+        "  name,\r\n",
+        "  SUM(total_points) AS total_points\r\n",
+        "FROM f1_catalog.gold.driver_standings_gold\r\n",
+        "WHERE race_year = :race_year\r\n",
+        "GROUP BY name\r\n",
+        "ORDER BY total_points DESC;\r\n"
+      ],
+      "parameters": [
+        {
+          "displayName": "race_year",
+          "keyword": "race_year",
+          "dataType": "STRING",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "2020"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "1640025e",
+      "displayName": "points_acrossrounds",
+      "queryLines": [
+        "SELECT\r\n",
+        "  round,\r\n",
+        "  name,\r\n",
+        "  SUM(total_points) AS total_points\r\n",
+        "FROM f1_catalog.gold.driver_standings_gold\r\n",
+        "WHERE race_year = :race_year\r\n",
+        "GROUP BY round, name\r\n",
+        "ORDER BY round, total_points DESC;\r\n"
+      ],
+      "parameters": [
+        {
+          "displayName": "race_year",
+          "keyword": "race_year",
+          "dataType": "STRING",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "2020"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "e6ef471d",
+      "displayName": "constructor_standings",
+      "queryLines": [
+        "select * from f1_catalog.gold.constructor_standings_gold"
+      ]
+    },
+    {
+      "name": "5008d8e4",
+      "displayName": "constructor_leaderboard",
+      "queryLines": [
+        "SELECT\r\n",
+        "  r.year AS race_year,\r\n",
+        "  c.name AS constructor_name,\r\n",
+        "  SUM(cs.points) AS total_points,\r\n",
+        "  SUM(cs.wins) AS total_wins,\r\n",
+        "  RANK() OVER (PARTITION BY r.year ORDER BY SUM(cs.points) DESC) AS position\r\n",
+        "FROM f1_catalog.gold.constructor_standings_gold cs\r\n",
+        "JOIN f1_catalog.silver.races_silver r ON cs.race_id = r.race_id\r\n",
+        "JOIN f1_catalog.silver.constructors_silver c ON cs.constructor_id = c.constructor_id\r\n",
+        "WHERE r.year = :race_year\r\n",
+        "GROUP BY r.year, c.name\r\n",
+        "ORDER BY position;\r\n"
+      ],
+      "parameters": [
+        {
+          "displayName": "race_year",
+          "keyword": "race_year",
+          "dataType": "STRING",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "2020"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "9db0f5f2",
+      "displayName": "points_perconstructor",
+      "queryLines": [
+        "SELECT\r\n",
+        "  c.name AS constructor_name,\r\n",
+        "  SUM(cs.points) AS total_points\r\n",
+        "FROM f1_catalog.gold.constructor_standings_gold cs\r\n",
+        "JOIN f1_catalog.silver.races_silver r ON cs.race_id = r.race_id\r\n",
+        "JOIN f1_catalog.silver.constructors_silver c ON cs.constructor_id = c.constructor_id\r\n",
+        "WHERE r.year = :race_year\r\n",
+        "GROUP BY c.name\r\n",
+        "ORDER BY total_points DESC;\r\n"
+      ],
+      "parameters": [
+        {
+          "displayName": "race_year",
+          "keyword": "race_year",
+          "dataType": "STRING",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "2020"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8f153e3c",
+      "displayName": "wins_perconstructor",
+      "queryLines": [
+        "SELECT\r\n",
+        "  c.name AS constructor_name,\r\n",
+        "  SUM(cs.wins) AS total_wins\r\n",
+        "FROM f1_catalog.gold.constructor_standings_gold cs\r\n",
+        "JOIN f1_catalog.silver.races_silver r ON cs.race_id = r.race_id\r\n",
+        "JOIN f1_catalog.silver.constructors_silver c ON cs.constructor_id = c.constructor_id\r\n",
+        "WHERE r.year = :race_year\r\n",
+        "GROUP BY c.name\r\n",
+        "ORDER BY total_wins DESC;\r\n"
+      ],
+      "parameters": [
+        {
+          "displayName": "race_year",
+          "keyword": "race_year",
+          "dataType": "STRING",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "2020"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "9566590d",
+      "displayName": "constructor_maxpoints",
+      "queryLines": [
+        "SELECT\r\n",
+        "  c.name AS top_constructor,\r\n",
+        "  SUM(cs.points) AS max_points\r\n",
+        "FROM f1_catalog.gold.constructor_standings_gold cs\r\n",
+        "JOIN f1_catalog.silver.races_silver r ON cs.race_id = r.race_id\r\n",
+        "JOIN f1_catalog.silver.constructors_silver c ON cs.constructor_id = c.constructor_id\r\n",
+        "WHERE r.year = :race_year\r\n",
+        "GROUP BY c.name\r\n",
+        "ORDER BY max_points DESC\r\n",
+        "LIMIT 1;\r\n"
+      ],
+      "parameters": [
+        {
+          "displayName": "race_year",
+          "keyword": "race_year",
+          "dataType": "STRING",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "2020"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "bab8148f",
+      "displayName": "constructor_mostwins",
+      "queryLines": [
+        "SELECT\r\n",
+        "  c.name AS top_constructor,\r\n",
+        "  SUM(cs.wins) AS max_wins\r\n",
+        "FROM f1_catalog.gold.constructor_standings_gold cs\r\n",
+        "JOIN f1_catalog.silver.races_silver r ON cs.race_id = r.race_id\r\n",
+        "JOIN f1_catalog.silver.constructors_silver c ON cs.constructor_id = c.constructor_id\r\n",
+        "WHERE r.year = :race_year\r\n",
+        "GROUP BY c.name\r\n",
+        "ORDER BY max_wins DESC\r\n",
+        "LIMIT 1;\r\n"
+      ],
+      "parameters": [
+        {
+          "displayName": "race_year",
+          "keyword": "race_year",
+          "dataType": "STRING",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "2020"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "27e105a8",
+      "displayName": "constructors_total",
+      "queryLines": [
+        "SELECT\r\n",
+        "  COUNT(DISTINCT cs.constructor_id) AS num_constructors\r\n",
+        "FROM f1_catalog.gold.constructor_standings_gold cs\r\n",
+        "JOIN f1_catalog.silver.races_silver r ON cs.race_id = r.race_id\r\n",
+        "WHERE r.year = :race_year;\r\n"
+      ],
+      "parameters": [
+        {
+          "displayName": "race_year",
+          "keyword": "race_year",
+          "dataType": "STRING",
+          "defaultSelection": {
+            "values": {
+              "dataType": "STRING",
+              "values": [
+                {
+                  "value": "2020"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "cff9969e",
+      "displayName": "driverstandings",
+      "layout": [
+        {
+          "widget": {
+            "name": "c7bd8dd7",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "de920dc5",
+                  "fields": [
+                    {
+                      "name": "name",
+                      "expression": "`name`"
+                    },
+                    {
+                      "name": "nationality",
+                      "expression": "`nationality`"
+                    },
+                    {
+                      "name": "total_points",
+                      "expression": "`total_points`"
+                    },
+                    {
+                      "name": "total_wins",
+                      "expression": "`total_wins`"
+                    },
+                    {
+                      "name": "position",
+                      "expression": "`position`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "name",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 0,
+                    "title": "name",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "name"
+                  },
+                  {
+                    "fieldName": "nationality",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 1,
+                    "title": "nationality",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "nationality"
+                  },
+                  {
+                    "fieldName": "total_points",
+                    "numberFormat": "0.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "float",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 2,
+                    "title": "total_points",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "total_points"
+                  },
+                  {
+                    "fieldName": "total_wins",
+                    "numberFormat": "0",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "integer",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 3,
+                    "title": "total_wins",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "total_wins"
+                  },
+                  {
+                    "fieldName": "position",
+                    "numberFormat": "0",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "integer",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 4,
+                    "title": "position",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "position"
+                  }
+                ]
+              },
+              "invisibleColumns": [
+                {
+                  "numberFormat": "0",
+                  "booleanValues": [
+                    "false",
+                    "true"
+                  ],
+                  "imageUrlTemplate": "{{ @ }}",
+                  "imageTitleTemplate": "{{ @ }}",
+                  "imageWidth": "",
+                  "imageHeight": "",
+                  "linkUrlTemplate": "{{ @ }}",
+                  "linkTextTemplate": "{{ @ }}",
+                  "linkTitleTemplate": "{{ @ }}",
+                  "linkOpenInNewTab": true,
+                  "name": "race_year",
+                  "type": "integer",
+                  "displayAs": "number",
+                  "order": 5,
+                  "title": "race_year",
+                  "allowSearch": false,
+                  "alignContent": "right",
+                  "allowHTML": false,
+                  "highlightLinks": false,
+                  "useMonospaceFont": false,
+                  "preserveWhitespace": false
+                }
+              ],
+              "allowHTMLByDefault": false,
+              "itemsPerPage": 25,
+              "paginationSize": "default",
+              "condensed": false,
+              "withRowNumber": false,
+              "frame": {
+                "showTitle": true,
+                "title": "DRIVERS LEADERBOARD "
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "d0043ccb",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "9a028f47",
+                  "fields": [
+                    {
+                      "name": "name",
+                      "expression": "`name`"
+                    },
+                    {
+                      "name": "sum(total_points)",
+                      "expression": "SUM(`total_points`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "name",
+                  "scale": {
+                    "type": "categorical"
+                  },
+                  "displayName": "Name"
+                },
+                "y": {
+                  "fieldName": "sum(total_points)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Total Points"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "POINTS BY DRIVER"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 10,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "bc1ec8be",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "1640025e",
+                  "fields": [
+                    {
+                      "name": "round",
+                      "expression": "`round`"
+                    },
+                    {
+                      "name": "sum(total_points)",
+                      "expression": "SUM(`total_points`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "round",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "ROUND"
+                },
+                "y": {
+                  "fieldName": "sum(total_points)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "TOTAL POINTS"
+                },
+                "label": {
+                  "show": false
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "POINTS PROGRESSIO ACROSS ROUNDS"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 16,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "074177d9",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "19f0b05a",
+                  "fields": [
+                    {
+                      "name": "total_drivers",
+                      "expression": "`total_drivers`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "total_drivers",
+                  "displayName": "total_drivers"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "TOTAL DRIVERS\n"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 1,
+            "width": 2,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "f7f4bb49",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "14c03782",
+                  "fields": [
+                    {
+                      "name": "name",
+                      "expression": "`name`"
+                    },
+                    {
+                      "name": "total_points",
+                      "expression": "`total_points`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "total_points",
+                  "displayName": "total_points"
+                },
+                "target": {
+                  "fieldName": "name",
+                  "displayName": "name"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "TOP DRIVER (by points)"
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 1,
+            "width": 2,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "6cbf1915",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c515c963",
+                  "fields": [
+                    {
+                      "name": "name",
+                      "expression": "`name`"
+                    },
+                    {
+                      "name": "total_wins",
+                      "expression": "`total_wins`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "total_wins",
+                  "displayName": "total_wins"
+                },
+                "target": {
+                  "fieldName": "name",
+                  "displayName": "name"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "DRIVER WITH MOST WINS"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 1,
+            "width": 2,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "57208342",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "cc0ef730",
+                  "fields": [
+                    {
+                      "name": "sum(total_wins)",
+                      "expression": "SUM(`total_wins`)"
+                    },
+                    {
+                      "name": "name",
+                      "expression": "`name`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "sum(total_wins)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Sum of total_wins"
+                },
+                "color": {
+                  "fieldName": "name",
+                  "scale": {
+                    "type": "categorical",
+                    "mappings": [
+                      {
+                        "value": "Lewis Hamilton",
+                        "color": {
+                          "themeColorType": "fontColor"
+                        }
+                      }
+                    ]
+                  },
+                  "displayName": "name"
+                },
+                "label": {
+                  "show": true
+                }
+              },
+              "frame": {
+                "title": "Wins Distribution by Name",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 16,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "90f4b146",
+            "queries": [
+              {
+                "name": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f0944b24d51909af0b860954bc068e_race_year",
+                "query": {
+                  "datasetName": "de920dc5",
+                  "parameters": [
+                    {
+                      "name": "race_year",
+                      "keyword": "race_year"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f0944cd42c1151a05d08656c713d22_race_year",
+                "query": {
+                  "datasetName": "19f0b05a",
+                  "parameters": [
+                    {
+                      "name": "race_year",
+                      "keyword": "race_year"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f0944d2c7c18ea96446f39af08d41c_race_year",
+                "query": {
+                  "datasetName": "14c03782",
+                  "parameters": [
+                    {
+                      "name": "race_year",
+                      "keyword": "race_year"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f0944db30f17e19b21a0b3eccbea7c_race_year",
+                "query": {
+                  "datasetName": "c515c963",
+                  "parameters": [
+                    {
+                      "name": "race_year",
+                      "keyword": "race_year"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f0944fb635192993518724e89afd72_race_year",
+                "query": {
+                  "datasetName": "cc0ef730",
+                  "parameters": [
+                    {
+                      "name": "race_year",
+                      "keyword": "race_year"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f09453dcb418469d604a7bda264929_race_year",
+                "query": {
+                  "datasetName": "9a028f47",
+                  "parameters": [
+                    {
+                      "name": "race_year",
+                      "keyword": "race_year"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f094540ca410c9ac7ac9ecb76e4f2f_race_year",
+                "query": {
+                  "datasetName": "1640025e",
+                  "parameters": [
+                    {
+                      "name": "race_year",
+                      "keyword": "race_year"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "parameterName": "race_year",
+                    "queryName": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f0944b24d51909af0b860954bc068e_race_year"
+                  },
+                  {
+                    "parameterName": "race_year",
+                    "queryName": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f0944cd42c1151a05d08656c713d22_race_year"
+                  },
+                  {
+                    "parameterName": "race_year",
+                    "queryName": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f0944d2c7c18ea96446f39af08d41c_race_year"
+                  },
+                  {
+                    "parameterName": "race_year",
+                    "queryName": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f0944db30f17e19b21a0b3eccbea7c_race_year"
+                  },
+                  {
+                    "parameterName": "race_year",
+                    "queryName": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f0944fb635192993518724e89afd72_race_year"
+                  },
+                  {
+                    "parameterName": "race_year",
+                    "queryName": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f09453dcb418469d604a7bda264929_race_year"
+                  },
+                  {
+                    "parameterName": "race_year",
+                    "queryName": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f094540ca410c9ac7ac9ecb76e4f2f_race_year"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Race year"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 1
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS"
+    },
+    {
+      "name": "7878e562",
+      "displayName": "constructor_standings",
+      "layout": [
+        {
+          "widget": {
+            "name": "c3b20c1e",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "27e105a8",
+                  "fields": [
+                    {
+                      "name": "num_constructors",
+                      "expression": "`num_constructors`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "num_constructors",
+                  "displayName": "num_constructors"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "TOTAL CONSTRUCTORS"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 1,
+            "width": 2,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "fd7a9010",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "9566590d",
+                  "fields": [
+                    {
+                      "name": "top_constructor",
+                      "expression": "`top_constructor`"
+                    },
+                    {
+                      "name": "max_points",
+                      "expression": "`max_points`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "max_points",
+                  "displayName": "max_points"
+                },
+                "target": {
+                  "fieldName": "top_constructor",
+                  "displayName": "top_constructor"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "TOP CONSTRUCTOR (by points)"
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 1,
+            "width": 2,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "57373675",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "bab8148f",
+                  "fields": [
+                    {
+                      "name": "top_constructor",
+                      "expression": "`top_constructor`"
+                    },
+                    {
+                      "name": "max_wins",
+                      "expression": "`max_wins`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "max_wins",
+                  "displayName": "max_wins"
+                },
+                "target": {
+                  "fieldName": "top_constructor",
+                  "displayName": "top_constructor"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "TOP CONSTRUCTOR (by wins)"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 1,
+            "width": 2,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "fd88338b",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "5008d8e4",
+                  "fields": [
+                    {
+                      "name": "constructor_name",
+                      "expression": "`constructor_name`"
+                    },
+                    {
+                      "name": "total_points",
+                      "expression": "`total_points`"
+                    },
+                    {
+                      "name": "total_wins",
+                      "expression": "`total_wins`"
+                    },
+                    {
+                      "name": "position",
+                      "expression": "`position`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "constructor_name",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 100001,
+                    "title": "constructor_name",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "constructor_name"
+                  },
+                  {
+                    "fieldName": "total_points",
+                    "numberFormat": "0.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "float",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100002,
+                    "title": "total_points",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "total_points"
+                  },
+                  {
+                    "fieldName": "total_wins",
+                    "numberFormat": "0",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "integer",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100003,
+                    "title": "total_wins",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "total_wins"
+                  },
+                  {
+                    "fieldName": "position",
+                    "numberFormat": "0",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "integer",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100004,
+                    "title": "position",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false,
+                    "displayName": "position"
+                  }
+                ]
+              },
+              "invisibleColumns": [
+                {
+                  "numberFormat": "0",
+                  "booleanValues": [
+                    "false",
+                    "true"
+                  ],
+                  "imageUrlTemplate": "{{ @ }}",
+                  "imageTitleTemplate": "{{ @ }}",
+                  "imageWidth": "",
+                  "imageHeight": "",
+                  "linkUrlTemplate": "{{ @ }}",
+                  "linkTextTemplate": "{{ @ }}",
+                  "linkTitleTemplate": "{{ @ }}",
+                  "linkOpenInNewTab": true,
+                  "name": "race_year",
+                  "type": "integer",
+                  "displayAs": "number",
+                  "order": 100000,
+                  "title": "race_year",
+                  "allowSearch": false,
+                  "alignContent": "right",
+                  "allowHTML": false,
+                  "highlightLinks": false,
+                  "useMonospaceFont": false,
+                  "preserveWhitespace": false
+                }
+              ],
+              "allowHTMLByDefault": false,
+              "itemsPerPage": 25,
+              "paginationSize": "default",
+              "condensed": false,
+              "withRowNumber": false,
+              "frame": {
+                "showTitle": true,
+                "title": "CONSTRUCTOR LEADERBOARD"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "412e6ca1",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "9db0f5f2",
+                  "fields": [
+                    {
+                      "name": "constructor_name",
+                      "expression": "`constructor_name`"
+                    },
+                    {
+                      "name": "total_points",
+                      "expression": "`total_points`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "constructor_name",
+                  "scale": {
+                    "type": "categorical"
+                  },
+                  "displayName": "constructor_name"
+                },
+                "y": {
+                  "fieldName": "total_points",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "TOTAL POINTS"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 9,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "88b51875",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "8f153e3c",
+                  "fields": [
+                    {
+                      "name": "constructor_name",
+                      "expression": "`constructor_name`"
+                    },
+                    {
+                      "name": "sum(total_wins)",
+                      "expression": "SUM(`total_wins`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "constructor_name",
+                  "scale": {
+                    "type": "categorical"
+                  },
+                  "displayName": "constructor_name"
+                },
+                "y": {
+                  "fieldName": "sum(total_wins)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "TOTAL WINS"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 15,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "d4c3fe7e",
+            "queries": [
+              {
+                "name": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f0945a7a2b11ada54faee2f9752ebd_race_year",
+                "query": {
+                  "datasetName": "27e105a8",
+                  "parameters": [
+                    {
+                      "name": "race_year",
+                      "keyword": "race_year"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f09457bd7514f083c1d2136f4c8a50_race_year",
+                "query": {
+                  "datasetName": "5008d8e4",
+                  "parameters": [
+                    {
+                      "name": "race_year",
+                      "keyword": "race_year"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f094580ab91648a11b68df37e21f3d_race_year",
+                "query": {
+                  "datasetName": "9db0f5f2",
+                  "parameters": [
+                    {
+                      "name": "race_year",
+                      "keyword": "race_year"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f09458f0b11a3bb479acfbca2d1ca4_race_year",
+                "query": {
+                  "datasetName": "8f153e3c",
+                  "parameters": [
+                    {
+                      "name": "race_year",
+                      "keyword": "race_year"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f0945951051be8a0dfde74654c08c8_race_year",
+                "query": {
+                  "datasetName": "9566590d",
+                  "parameters": [
+                    {
+                      "name": "race_year",
+                      "keyword": "race_year"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f0945a4b6a1862985c41a5687ed912_race_year",
+                "query": {
+                  "datasetName": "bab8148f",
+                  "parameters": [
+                    {
+                      "name": "race_year",
+                      "keyword": "race_year"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "parameterName": "race_year",
+                    "queryName": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f0945a7a2b11ada54faee2f9752ebd_race_year"
+                  },
+                  {
+                    "parameterName": "race_year",
+                    "queryName": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f09457bd7514f083c1d2136f4c8a50_race_year"
+                  },
+                  {
+                    "parameterName": "race_year",
+                    "queryName": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f094580ab91648a11b68df37e21f3d_race_year"
+                  },
+                  {
+                    "parameterName": "race_year",
+                    "queryName": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f09458f0b11a3bb479acfbca2d1ca4_race_year"
+                  },
+                  {
+                    "parameterName": "race_year",
+                    "queryName": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f0945951051be8a0dfde74654c08c8_race_year"
+                  },
+                  {
+                    "parameterName": "race_year",
+                    "queryName": "parameter_dashboards/01f0944a6de8149f8d7e5a3c4e8cece4/datasets/01f0945a4b6a1862985c41a5687ed912_race_year"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Race year"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 1
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS"
+    },
+    {
+      "name": "0cf2da24",
+      "displayName": "Global Filters",
+      "pageType": "PAGE_TYPE_GLOBAL_FILTERS"
+    },
+    {
+      "name": "37265478",
+      "displayName": "Untitled page",
+      "pageType": "PAGE_TYPE_CANVAS"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "canvasBackgroundColor": {
+        "light": "#FAFAFB",
+        "dark": "#1F272D"
+      },
+      "widgetBackgroundColor": {
+        "light": "#FFFFFF",
+        "dark": "#11171C"
+      },
+      "fontColor": {
+        "light": "#11171C",
+        "dark": "#E8ECF0"
+      },
+      "selectionColor": {
+        "light": "#2272B4",
+        "dark": "#8ACAFF"
+      },
+      "visualizationColors": [
+        "#077A9D",
+        "#FFAB00",
+        "#00A972",
+        "#FF3621",
+        "#8BCAE7",
+        "#AB4057",
+        "#99DDB4",
+        "#FCA4A1",
+        "#919191",
+        "#BF7080"
+      ],
+      "widgetHeaderAlignment": "LEFT"
+    }
+  }
+}
